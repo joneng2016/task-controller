@@ -1,32 +1,23 @@
 package com.system.task_controller.controllers.task.dto;
 
-import jakarta.validation.constraints.*;
-
 import java.time.LocalDate;
 
-public class TaskDTO {
+public class TaskPutDTO {
 
     private Integer id;
 
-    @NotNull(message = "Name cannot be null")
     private String name;
 
-    @NotNull(message = "Description cannot be null")
     private String description;
 
-    @NotNull(message = "Status cannot be null")
     private String status;
 
-    @NotNull(message = "DevTime cannot be null")
     private Integer devTime;
 
-    @NotNull(message = "DevTime cannot be null")
     private Integer qaTime;
 
-    @NotNull(message = "DevTime cannot be null")
     private Integer timeDone;
 
-    @NotNull(message = "DevTime cannot be null")
     private String responsible;
 
     private LocalDate createdAt;

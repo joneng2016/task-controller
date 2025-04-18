@@ -1,19 +1,26 @@
 package com.system.task_controller.controllers.task;
 
+import com.system.task_controller.Utils;
 import com.system.task_controller.controllers.task.dto.ResponsePostTask;
 import com.system.task_controller.controllers.task.dto.ResponseOfFind;
+import com.system.task_controller.controllers.task.dto.TaskPutDTO;
 import com.system.task_controller.entities.Task;
 
 import java.util.Optional;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.http.ResponseEntity;
+
 import com.system.task_controller.repository.TaskRepository;
 
 import jakarta.validation.Valid;
@@ -32,15 +39,17 @@ public class TaskController {
     }
 
     @GetMapping
-    public List<Task> getData(
+    public ResponseEntity<List<Task>> getData(
         @RequestParam(defaultValue = "0") int page,
         @RequestParam(defaultValue = "5") int size
     ) {
-        return taskRepository.findAll(PageRequest.of(page, size)).getContent();
+        return ResponseEntity.ok(
+            taskRepository.findAll(PageRequest.of(page, size)).getContent()
+        );
     }
 
     @GetMapping("/find")
-    public ResponseOfFind findTaskById(
+    public ResponseEntity<ResponseOfFind> findTaskById(
         @RequestParam(defaultValue = "0") Long id,
         @RequestParam(defaultValue = "") String taskName,
         @RequestParam(defaultValue = "") String responsible
@@ -63,7 +72,7 @@ public class TaskController {
             response.setMessage(e.getMessage());;
         }
 
-        return response;
+        return ResponseEntity.ok(response);
     }
 
     public List<Task> verifyOthersAttributes(
@@ -100,7 +109,7 @@ public class TaskController {
     }
 
     @PostMapping
-    public ResponsePostTask postTask(@Valid @RequestBody Task task) {
+    public ResponseEntity<ResponsePostTask> postTask(@Valid @RequestBody Task task) {
         ResponsePostTask responsePostTask;
 
         try {
@@ -114,6 +123,37 @@ public class TaskController {
             responsePostTask = new ResponsePostTask("Error creating task: " + e.getMessage());
         }
 
-        return responsePostTask;
+        return ResponseEntity.status(HttpStatus.CREATED).body(responsePostTask);
+    }
+
+    @PutMapping
+    public ResponseOfFind putTask(
+            @RequestParam(defaultValue = "0") Long id,
+            @Valid @RequestBody TaskPutDTO task
+    )
+    {
+        ResponseOfFind responseOfFind = new ResponseOfFind("success");
+        List<Task> tasks = new ArrayList<>();
+
+        try {
+            Optional<Task> optionalTask = taskRepository.findById(id);
+
+            if (optionalTask.isEmpty()) {
+                throw new RuntimeException("Task not found");
+            }
+
+            Task taskOnDb = optionalTask.get();
+
+            Utils.getInstance().updateOnTask(task,taskOnDb);
+            taskOnDb = taskRepository.save(taskOnDb);
+
+            tasks.add(taskOnDb);
+
+            responseOfFind.setTasks(tasks);
+        } catch (Exception e) {
+            responseOfFind.setMessage(e.getMessage());
+        }
+
+        return responseOfFind;
     }
 }
