@@ -4,38 +4,50 @@ import jakarta.validation.constraints.*;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Column;
 
 import java.time.LocalDate;
 
 @Entity
+@Table(name = "tasks")
 public class Task {
 
     @Id
-    @GeneratedValue
-    private Integer id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
+    @Column(name = "name", nullable = false)
     private String name;
 
+    @Column(name = "description", nullable = false)
     private String description;
 
+    @Column(name = "status", nullable = false)
     private String status;
 
+    @Column(name = "dev_time", nullable = false)
     private Integer devTime;
 
+    @Column(name = "qa_time", nullable = false)
     private Integer qaTime;
 
+    @Column(name = "time_done", nullable = false)
     private Integer timeDone;
 
+    @Column(name = "responsible", nullable = false)
     private String responsible;
 
+    @Column(name = "created_at", nullable = false)
     private LocalDate createdAt;
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
