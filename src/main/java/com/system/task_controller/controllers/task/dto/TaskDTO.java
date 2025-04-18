@@ -1,10 +1,10 @@
-package com.example.task_controller.controllers.task.dto;
+package com.system.task_controller.controllers.task.dto;
 
 import jakarta.validation.constraints.*;
 
 import java.time.LocalDate;
 
-public class Task {
+public class TaskDTO {
 
     private Integer id;
 

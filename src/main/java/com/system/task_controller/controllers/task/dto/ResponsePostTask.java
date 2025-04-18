@@ -1,4 +1,4 @@
-package com.example.task_controller.controllers.task.dto;
+package com.system.task_controller.controllers.task.dto;
 
 public class ResponsePostTask
 {
